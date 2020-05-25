@@ -1,0 +1,40 @@
+alieviate testing burden by using TP to find bugs in code that validates user input
+
+most commonly reported security vulnerabilities: 
+  SQL injection, cross-site scripting, and remote file inclusion
+
+
+if (tainted) user input reaches a sensitive function before being validated, a vulernability is reported 
+
+sinks == methods that untrusted data should never reach
+
+security related methods 
+  -- with args shouldn't be controled by an attacker -- 
+  should not be invokved with a tainted string
+==> if so, report vulnerability
+
+taints should vary in color -- need to "differentiate multiplce sources of taint and track them independently"
+ -- create associations between sources of tainted/attacker-controllable(?) with tainted, impacted values 
+            via flags
+
+input is taint, anything used in combination with input is tainted
+  e.g. a SQL string made by concatenating some strings around the input
+
+one issue with software that helps security is managing your false positives and false negatives 
+- one soln with TA: cleanse rules 
+   * specify how to adjust the taint status of values that unergo validation
+   ** up to user of the TA software, since their validation methods will vary
+
+
+taint is not tracked through native code (what is native code?) 
+or when strings are decomposed into individual characters;
+cleanse rules might mistakenly remove taint from a value that has received insufficient validation
+
+---
+
+the most widely used TP system belongs to the Perl programming language 
+ user-supplied commands are not executed in scripst that run with root privileges 
+ -- remove taint when a string passes thru fuxns that typically used for input validation
+ Perl's goal: prevent successful attacks (rather than to find bugs)
+
+TA can be used to find buffer overflow vulnerabilities in programs written in C 

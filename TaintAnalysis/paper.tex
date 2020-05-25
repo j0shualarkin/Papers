@@ -1,0 +1,381 @@
+\documentclass[11pt]{article}
+
+\usepackage{graphicx}
+\graphicspath{{.}}
+\usepackage{amsthm}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{indentfirst}
+\usepackage{layout}
+\usepackage{hanging}
+\usepackage{setspace}
+\usepackage{mathtools}
+
+\DeclarePairedDelimiter\qb{\lvert}{\rangle}
+
+\def\tit{Survey of Taint Analysis}
+\def\term{24 April 2020}
+
+\def\auths{Joshua Larkin}
+
+\doublespacing
+
+\lhead{\auths}
+\chead{\tit}
+\rhead{\thepage}
+\cfoot{}
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\tit}}\\
+    \normalsize\vspace{0.1in}\small{B433 : Spring 2020 }\\
+    \vspace{0.1in}\large{\textit{\auths}}
+    \vspace{3in}
+}
+
+\date{}
+
+\renewcommand\headrulewidth{0.4pt}
+\fancyheadoffset{0.5 cm}
+
+\oddsidemargin 0pt
+\evensidemargin 0pt
+\topmargin -.3in
+\headsep 20pt
+%\footskip 20pt
+\textheight 8.5in
+\textwidth 6.25in
+
+\setlength\topmargin{0pt}
+\addtolength\topmargin{-\headheight}
+\addtolength\topmargin{-\headsep}
+\setlength\oddsidemargin{0pt}
+\setlength\textwidth{\paperwidth}
+\addtolength\textwidth{-2in}
+\setlength\textheight{\paperheight}
+\addtolength\textheight{-2in}
+
+\begin{document}
+
+%%%% TITLE PAGE
+\maketitle
+\pagebreak
+
+%%%%% First content page
+
+\section*{Introduction}
+In practice, cybersecurity is a game of cat and mouse. In response to viruses and worms
+making their way into systems, anti-virus software was developed to combat it. Then anti-anti-virus software was developed by attackers to circumvent the new protections 
+in place.  This dynamic between attackers and protectors requires strong testing 
+of software systems and web applications in order to maintain the CIA standard for 
+cybersecurity. 
+
+A novel approach to securing software systems is analysis of data provided by users.
+Determining sources of user input and keeping track of what data has been used with
+user input is a technique of information flow analysis -- 
+described here as taint analysis. 
+
+Quality assurance technicians and security testers put the systems they are 
+responsible for through rigorous testing, to be sure there is a barrier between
+their vulnerabilities and an attack. 
+With each growth in scale, codebases become more complex and testing requires 
+more time and energy. This has prompted more work into strategies and techniques
+for constructing tests and finding vulnerabilities in code.
+
+Consider some of the more common classes of attacks in software and web scenarios: 
+SQL injections, cross-site scripting and request forgery, and buffer overflow exploits. 
+In all of these attacks, the attacker is inserting code into a running 
+program to do something malicious, to find an exploit or launch an attack. 
+This point of insertion is the root of most issues in security, and as such, is 
+considered untrusted. 
+
+Taint analysis can harden web applications and reduce attack surfaces by either 
+automatically adding runtime checks to prevent bad data from being executed or
+by raising alerts based on what regions of the application handle tainted (untrusted)
+data. 
+
+Taint analysis can be used to prevent attacks that exploit computer memory, 
+like buffer ooverflow and stack smashing attacks. Often these attacks use injected 
+code that overwrites memory and replaces the return address of a function with 
+an injected address.  ``A policy that prohibits dereferencing of tainted pointers"$^2$
+will stop the attack before it can execute.  We will discuss more of what a policy is
+and what the role of policies are in taint analysis in this work. The scope of 
+taint analysis is not limited to injection attacks or memory exploits either. 
+Tracking information about codes source can be used to track code unpacked 
+by decryption engines in malware, or to study the behavior of network protocols.$^1$ 
+
+\section*{Approach}
+We will formalize more clearly what taint analysis is in practice by discussing
+the core features that are consistently used in different implementations. 
+Then we will discuss a few implementations, observing how they coincide and differ
+from the high-level description. This will include a research language, approaches
+done in C, PHP and Java. Further details relevant to implementations of taint-analysis
+will be discussed. In the subsequent section we offer suggestions on future work.
+Then we will conclude with a summary and commentary on the subject.
+
+
+\section*{Fundamentals}
+The basis of taint analysis is marking taint, spreading information and checking sensitive
+regions of code for tainted data. To use taint analysis, extensions need to be made
+to the programming languages used.
+The idea behind marking is to maintain some information about places in code 
+that are untrusted, considering them tainted. 
+Policies can then be used to mark data that comes in contact with tainted data. 
+The policies are general rules derived over the terms in the language 
+and the status of taint for terms. 
+For example, if the variable $\texttt{x}$ is assigned to the result of a 
+$\texttt{read()}$ operation, and then variable $\texttt{sql\_stmt}$ is 
+created from concatenating a string like 
+$\texttt{SELECT * from Table where userid = }$ with the tainted variable $\texttt{x}$,
+then the $\texttt{sql\_stmt}$ will be tainted as well. The policy used here is one for 
+any binary operation, like concatenation: if either of the operands is tained, mark
+the result as tainted. This is a standard policy, and policies for other forms
+like unary operators or assignment are very similar. 
+
+By devising enough policies to cover
+all the necessary constructs, the flow of information through the entire program
+is possible.  In our example, the $\texttt{sql\_stmt}$ is a vulnerability which would 
+be checked by raising an alert that untrusted data has reached a sink -- a critical
+attack surface.
+Whether this is performed at run-time or compile-time is the principle difference 
+in dynamic and static taint analysis.  Static taint analysis
+keeps track at each instruction of the program, what variables are tainted and 
+what variables they can influence. Dynamic taint analysis works by updating taint
+information as the program executes and values flow through the program.
+
+Applying taint analysis can be done statically or dynamically. 
+More concerete examples of taint analysis can be seen in a language called
+$\textbf{SimpIL}$, a simple intermediate language "powerful enough to express 
+typical languages as varied as Java and assembly code."$^1$ 
+Schwartz, Avgerinos and Brumley show the fundamentals of taint analysis in 
+the addition of two maps to the semantics of their language: 
+one taking variables to taint statuses and another mapping addresses to taint statuses;
+along with the staples of operational semantics: 
+a map between variables and values, a map of relevant memory addresses and 
+their cell data, a program counter, and 
+so on. In standard languages, functions return 
+values as usual, but in a language like $\textbf{SimpIL}$, functions return two things:
+the return value and a taint status. A taint status is specified as either $\textbf{T}$
+or $\textbf{F}$. By checking the taint status at run-time with established policies,
+dynamic taint analysis can be performed. 
+
+These constructs are essential to all taint-analysis systems, conducting analysis 
+is founded on keeping track of data's taint status and sharing that information
+to other relevant data. All the examples we will see 
+use the ideas expressed in $\textbf{SimpIL}$ at there core.
+
+A language like $\textbf{SimpIL}$ can be used as an informational tool, inspiring
+ideas for adding taint analysis to other languages, or as it is by adding some features
+that would make it more useful, like C (a language with similar structure). 
+One option is to ``compile missing high-level language constructs down"$^1$ to 
+$\textbf{SimpIL}$ or to ``add higher-level constructs to $\textbf{SimpIL}$"$^1$ like 
+functions or macros. 
+
+When deciding what data to mark as tainted, there are inherent problems to consider:
+What policy specification should be used to determine the relationship between memory 
+addresses and the cell pointed?  Does our system overtaint or undertaint or both 
+(in different code regions)? Are attacks always detected before they begin?
+Programmers and administrators must be aware of how their system performs in these 
+areas. 
+
+
+\section*{Transforming Code}
+
+We have seen at the high-level that taint information can be propagated by 
+adding it as a return value. In the implementation, the most straight-forward 
+realization of this is to tag each byte of memory as either tainted or not.
+A benefit of using more than a single bit is the ability to discern between untrusted 
+sources as well as being able to ``capture `degree of taintedness'."$^2$ 
+Other relevant
+information could be added as well with a more robust choice of taint representation. 
+However, the trade-off for taint analysis benefits is often the overhead required
+to maintain and propagate this information along with the execution of the program
+as usual. Xu, Bhatkar, and Sekar discuss using a single bit for tagging taint 
+and using 2-bit taint values for their runtime representation. It was observed
+that ``accessing of taint-bits requires several bit-masking, bit-shifting and unmasking
+operations, which degrade performance significantly."$^2$. So by using 2-bit taint 
+values, operations at the bit level are unnecessary to access values for integers, which can be stored with a single byte.
+They also discuss dynamically extending their map from addresses 
+to taint status in order to reduce the amount of memory used. This involves a strategic
+allocation of memory only when necessary. Work towards optimizations
+on runtime and memory usage is critical to the potential for growth
+of taint-analysis systems. 
+
+Xu, et. al. have implemented their technique in the Objective CAML language,
+and use it to transform C code to respect the policies they estbalish for information
+flow. It is of note that policies are often written in event-based languages that
+specify rules using pattern matching for function class and conditions. For example,
+if we are to execute a function for running shell commands, we can specify our policy
+to halt improperly (before executing the function) if any element of the string to be 
+executed has tainted meta-characters such as ``\&\&".  This approach is extendable to 
+many other injection attacks, as the essential difference is in which meta-characters
+to consider tainting. This makes taint-analysis very promising as a protection
+against common web application exploits. In their work, Xu et al. were able to prevent
+all of the standard injection attacks that we have discussed. 
+
+\section*{Modifying the String datatype}
+
+Another choice of implementation is not a transformer, but a transformed PHP 
+interpreter. Nguyen-Tuong et al. changed the string datatype
+to ``include tainting information for string values at the granularity of 
+individual characters"$^3$ and allowed for function calls to be rejected 
+when applied with tainted arguments. This approach ``ensures that all external 
+variables, ..., are marked as tainted,"$^3$ which benefits programmers who are sure 
+to sanitize inputs that explicity use user data but forget to give the same 
+care to other client available variables. Another benefit of this approach 
+is that programmers
+need only to use the modified PHP interpreter for their programs. 
+The challenges are not as clear, as the only such remark states that using 
+the modified interpreter induces performance overhead of ``less than 10\%."$^3$ 
+
+A similar idea was implemented by Chin and Wagner, who re-wired the string datatype
+in Java to store taint-information for individual characters. They do not concern
+themselves with ``degrees of taintedness" as we have discussed earlier. Using single-bit
+taint values, they add a field to the string class similar to all the approaches we have
+seen thus far: a map from indices to taint status, where the indices represent 
+characters of the string object. Given that Java has a more idiomatic way of handling
+strings -- that is, with the String, StringBuffer and StringBuilder classes -- 
+the propagation of taint information must be implemented in methods of these classes.
+After examining all 216 methods from the three relevant classes, they needed to modify 
+81 of them and add 21 methods$^4$. This approach also makes usage of taint analysis
+more adoptable than we have seen so far.
+By replacing the corresponding class files in the 
+standard library, the Java Virtual Machine ``automatically loads the augmented
+classes instead of the original string classes" and thus "does not require any
+changes to the legacy Java application's source code or bytecode."$^4$ 
+ 
+%Writing and using program transformers for taint-analysis is common, and 
+%several engines have been written to do so for most scripting languages -- most
+%of which are interpreted by C programs. The downside of these implementations 
+%is that not all code in a codebase will be available for analysis -- either
+%the source is un
+%% talk about more taint values than t/f -- important to differentiate between sources
+%% talk more about overhead 
+
+%enhanced language like they also return values are the return value of The key difference in a standard language
+%and one enhanced for taint analysis is that values are how values are returnee lThe taint statuses are effectively booleans, 
+%The idea 
+%
+%There are some We will discuss some of the theoretical foundations of taint analysis, and discuss
+%two applications of such theory to programs PHP and 
+%
+
+
+%Origin/Theortetical foundations for PL is dynamic taint analysis by cmu \\
+%
+%has drawbacks, so we have hardware solutions like flexitaint \\
+%
+%has applications to buffer overflow -- high coverage detection paper \\
+% (general idea of running programs by keepting track of inputs AND constraints  \
+%  (main theoretical idea is to mark where taint comes in, 
+%   we can always add more data to this))
+%
+%string libraries in java
+
+
+
+\section*{Suggestions}
+
+There are a few areas that I think could be expanded on in future research. 
+Much of the research literature and implementations are focused on preventing attacks
+with taint analysis, but it would be beneficial to find uses of taint analysis
+for database systems. Stored cross-site scripting attacks seem to only be caught
+if the system catches it at the printing HTML phase. Chin and Wagner mention this 
+can have issues with the browser that interprets the HTML, so "one solution would 
+be to specify taint status to the browser through the HTML."$^4$ 
+Further, research on taint analysis for SQL or services that facilitate SQL 
+databases, like MySql, would be useful. It is unclear if tracking taint across
+tables in a database would follow naturally from the techniques we have studied here.
+
+In terms of taint-analysis in practice, it is a bit unclear whether these systems
+are intended for the security team, quality assurance team or test engineering team.
+The Xu et al.'s C transformer could be applied after programs are written by a quality
+assurance or testing team, but the modified PHP interpreter we discussed would need to
+be used on the front end. Of course, it could be moved to later in the pipeline,
+yet the issue remains of who is responsible for putting systems through analysis.
+There should be more literature on how taint analysis systems are being used in
+the industry codebases, and also in the security development cycle. 
+
+Viewing tainted-ness at the type level, as opposed to values, should also be pursued. 
+Robust type systems offer strong static guarantees about programs, and there is no
+reason taint information could not be stored at the type level. There has been
+some research in this area already for languages like Java. Dependent types and
+formal verification tools are growing in popularity, and the research in these areas
+is often rife with proposed applications to security. An intersection of the two
+would follow naturally from the theory we have seen. Having dependent functions that
+are only call-able when provided with arguments that are untainted is the same idea
+that many of these runtime systems use. 
+
+%and it does require more techincally savvy
+%programmers to orchestrate constraint solvers for type equations. 
+%to  
+
+%
+%the core PHP writers would need to This could make for slower adoption and thus weaker results on applicability of 
+%taint-analysis. 
+%
+%
+%would be useful 
+%like MySQL fair 
+%It seems the general groundwork for taint-analysis has progressed to a point 
+%of systems having reasonable overheads and serious benefits. 
+%Response from workers in industry using taint analysis engines would be useful. 
+%
+%The response to this 
+%
+%laid systems
+%For quality assurance and test engineers, writing the programs with taint-analysis
+%systems is not in their hands. It would be beneficial to have more work done in
+%instrumenting programs that 
+%create 
+
+\section*{Conclusions}
+
+Taint analysis is a technique of code analysis that focuses on the flow of data
+from user input throughout the program. The goal is to raise alerts or terminate 
+functions from sending untrusted data to security critical sinks, such as databases 
+or generated web pages. Implementations involve modifying existing code via a program
+transform or extending the domain language. Extensions can be done on the compiler or 
+interpreter for the language, or by modifying relevant data types -- e.g., the String 
+class in Java or string datatype in PHP. The immediate challenge with taint
+analysis are reducing overhead created by designating more memory for taint information, 
+and applying more runtime checks for dynamic analysis. Further issues include 
+integrating taint-aware code with legacy code, especially in codebases at larger scales.
+
+Taint analysis is a very effective tool to protect web applications.
+All the examples shown can prevent many attacks: shell injection/execution,
+SQL injection, path traversal/location, phishing and other cross-site scripting attacks,
+buffer overflow and stack smashing. But it is better with other things. You need
+a good string matching program to find tainting characters in inputs. Some overhead
+and difficulties of overtainting or undertainting can be circumvented by applying
+more advanced techniques -- e.g., forward symbolic execution. It is good that 
+performance can be improved, but taint analysis is fairly simple in concept.
+Adding more gadgets from other areas to improve performance weakens the argument
+for adoption of taint analysis, I think. The best approach is one that 
+modifies the string datatype and any relevant methods. This coupled with introducing 
+taint at functions like $\texttt{read()}$ is the most succinct and portable solution.
+
+
+\newpage
+\section*{Bibliography/References}
+\begin{enumerate}
+    \item[$\textbf{1}$] Edward J. Schwartz, Thanassis Avgerinos, and David Brumley. 
+        2010. All you ever wanted to know about dynamic taint analysis and foward 
+        symbolic execution (but might have been afraid to ask). Carnegie Mellon 
+        University.
+
+    \item[$\textbf{2}$] Wei Xu, Sandeep Bhatkar, and R. Sekar. Taint-Enhanced Policy
+        Enforcement: A Practical Approach to Defeat a Wide Range of Attacks.
+        Stony Brook University.
+
+    \item[$\textbf{3}$] Ahn Nguyen-Tuong, Salvatore Guarnieri, Doug Greene, Jeff
+        Shirley, and David Evans. Automatically Hardening Web Applications Using 
+        Precise Tainting. University of Virginia.
+
+    \item[$\textbf{4}$] Erika Chin and David Wagner. Efficient Character-level 
+        Taint Tracking for Java. University of California, Berkeley.
+
+\end{enumerate}
+
+\end{document}

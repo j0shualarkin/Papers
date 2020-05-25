@@ -1,0 +1,393 @@
+\documentclass[11pt]{article}
+
+\usepackage{listings}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{indentfirst}
+\usepackage{layout}
+\usepackage{hanging}
+\usepackage{setspace}
+\usepackage{mathtools}
+
+\DeclarePairedDelimiter\qb{\lvert}{\rangle}
+
+\def\tit{Quantum Computing and Cybersecurity}
+\def\term{Fall 2019}
+\def\auths{Abigail Alwine \& Joshua Larkin}
+
+
+\doublespacing
+
+\lhead{\term}
+\chead{\tit}
+\rhead{\thepage}
+\cfoot{}
+
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\tit}}\\
+    \normalsize\vspace{0.1in}\small{B430 : Fall 2019 }\\
+    \vspace{0.1in}\large{\textit{\auths}}
+    \vspace{3in}
+}
+
+\date{}
+
+
+\newcommand{\icol}[1]{
+  \left(\begin{smallmatrix}#1\end{smallmatrix}\right)
+}
+
+
+\newcommand{\n}{\newline}
+\renewcommand\headrulewidth{0.4pt}
+\fancyheadoffset{0.5 cm}
+
+\oddsidemargin 0pt
+\evensidemargin 0pt
+\topmargin -.3in
+\headsep 20pt
+%\footskip 20pt
+\textheight 8.5in
+\textwidth 6.25in
+
+\setlength\topmargin{0pt}
+\addtolength\topmargin{-\headheight}
+\addtolength\topmargin{-\headsep}
+\setlength\oddsidemargin{0pt}
+\setlength\textwidth{\paperwidth}
+\addtolength\textwidth{-2in}
+\setlength\textheight{\paperheight}
+\addtolength\textheight{-2in}
+
+\begin{document}
+
+
+\maketitle
+\pagebreak
+
+% What is quantum computation
+% How does it undermine modern crypto
+% proposed fixes in post-quantum scenario
+
+\section{Introduction}
+
+% Introduction (1-2 pages): Motivate the problem/issue you are addressing in your paper. Why is it an interesting issue?
+
+In recent years, quantum computing has become a catalyst for discussions on the world's current computing abilities. The possibility of large-scale implementation of quantum computing signals a new era of security concerns and solutions. Specifically, advances in quantum computing may render most modern cryptography obsolete within a couple of decades. 
+
+Quantum machines offer a totally different way of thinking about computation. As they
+become more developed and successful as physical machines,
+we find new ways to solve old problems.
+The machine itself is difficult to get just right, and teams of physicists,
+engineers, mathematicians and computer scientists are collaborating to move this technology
+forward. The promise of new algorithms is important to those with a stake in
+the security of transactions as well as those working in areas of complexity theory.
+Ultimately, everyone should be asking the same questions: What are the benefits of quantum computers? What are the down-sides? 
+We address these questions in our work here, and maintain a focus on the areas of cybersecurity that quantum computing would significantly impact. 
+
+Currently, classical encryption schemes are considered secure because without access to a key, computers take an unfeasible amount of time to conduct brute force attacks against codes produced by enciphering techniques. Quantum computing poses a threat to modern technology by offering fast solutions to encryption schemes once thought impenetrable, and brute force attacks take much less time. There already exist quantum-based algorithms that can perform these brute force attacks, so all that remains is to construct a large-scale quantum computer before these attacks can be launched.
+
+All security measures relying on asymmetric cryptography (and some relying on symmetric cryptography) would become useless once there exists hardware that can perform these attacks within a reasonable amount of time.
+So, though it is unclear when such hardware will be built, the severity of the consequences means that our society has limited time to replace current encryption methods and find new solutions to problems such as key distribution and digital signatures.
+Therefore, to avoid catastrophic consequences, we must begin planning for quantum-based attacks. Such preparation includes: researching encryption schemes that are resistant to brute force attacks by quantum computers, effectively implementing these schemes on a wide scale, altering current Internet protocols to accommodate the new security measures, and maintaining an awareness of the current state of quantum machines in production.
+
+
+
+
+\section{Approach}
+
+We begin with a introduction to quantum computing, learning some of its fundamental
+differences from classical computing -- including the physical machine itself.
+Then, we will explore some prominent areas of cybersecurity
+and how a large-scale quantum computer would affect them, analyzing what will be considered
+safe and what will not.
+We will finish with a survey of the proposed responses in the post-quantum world
+and learn what new security methods are being researched.
+Afterward, we will offer suggestions for further work in this field, and then
+summarize the research herein. 
+
+% Approach (half page): A short section describing how you analyze the issue in the rest of the paper.
+% For example, "In Section 3, I will survey the existing techniques to address this problem,
+%   and in Section 4 I provide suggestions on how to better address the issue."
+% Frame the rest of the paper for the reader, so that the reader understands how you analyze the problem you motivated in the Introduction.
+
+
+
+\section{Survey of Existing Techniques/Solutions}
+ 
+% Survey of Existing Techniques/Solutions (4-5 pages):
+% This section forms the meat of your term paper.
+
+% I expect you to demonstrate that you have understood
+%   the space of existing techniques and solutions,
+%   including those from the research literature.
+
+% Your paper should give me a good picture of what's been done to address the problem.
+
+First we will give a description of what quantum computing is and how it differs from classical computing. Then we will discuss the ways in which the power of quantum computing will jeopardize modern cryptography. Finally, we will survey the proposed solutions and responses to a scenario where quantum computing has rendered some modern cryptographic schemes useless.
+
+% =========== what is quantum computing  ===========
+\subsection{What is Quantum Computing?}
+
+
+We will discuss both the computational and the physical aspects of quantum computing.
+We will then provide a basic understanding of how a quantum machine works, and insight into
+the real world development of such machines.
+
+  % talk about fault-tolerance / error-correction
+  % we take it for granted now bc it is solved but it is very important for quantum
+  % systems of considerable power, e.. a 40-50 qubit system
+  
+  The calculations done in a quantum system use qubits, measurement and linear algebra.
+  A qubit can be physically represented by the spin of an electron or the polarization of a photon (Bernhardt 1).
+  Measurement is an act on qubits to see how much spin in a direction the qubit has
+  --  vertical or horizontal.
+  We can build quantum systems from qubits and use binary numbers of
+  length \emph{n} to describe the vector the qubit represents. 
+  The simplest example is the 2-qubit system: $\{ \qb{0} \ , \qb{1} \}$.
+  The system is a vector space, namely a Hilbert space, that is comprised of linear combinations of the two base vectors -- the qubits.
+   The vectors are denoted as $\qb{0} = \icol{1\\0}$ and $\qb{1} = \icol{0\\1}$.
+
+  With classical machines, we know that for $n$-bits of data there are $2^n$ possible
+  states of the computer's memory. Consider a vector that encodes all those possible
+  states, with the probability, for each state, that the machine is in that state.
+  We assume there is one entry with probability 1 and the rest have probability 0.
+  This is the essential difference with quantum machines -- none of the entries are 0 nor 1, but real valued numbers between 0 and 1.
+  This follows from the idea of superposition of quantum states.
+  We then have to use an operation called measurement to determine which spin state the machine is in.
+  The denotation of a spin state is the sum of the base vectors scaled by complex numbers
+   $n_1$ and $n_2$, i.e. $\qb{x} = n_1\qb{0} + n_2\qb{1}$. 
+  Upon measurement the state will become either $\qb{0}$ or $\qb{1}$, and if the same state is measured again it will be the same value. This means that measurement is fixed once observed. Also these complex numbers, $n_1$ and $n_2$, hold information about interference
+  existing among different spin states in the computer.
+  This interference is useful because one could use quantum dynamics to build powerful procedures, such as Shor's quadratic factorization algorithm which we will discuss later. (DiVincenzo, Quantum Computation, 255).
+
+
+  Quantum computing uses gates and circuits much like classical computing.
+  There are more single qubit gates than classical single bit gates, because operations
+  on qubits can be very precise about what is changed.
+  The general purpose of gates is to rotate qubits in some fashion, and currently there
+  is work on reducing the amount of operations the hardware needs to perform in order to
+  execute simple methods.
+  There are some architectures that can offer $37\%$ reduction (on average) of
+  required elementary operations in quantum circuits. (Kashuk et. al., 9).
+
+  Another problem for quantum computing is the relation of data to control-flow
+  mechanisms within the computer.
+  This is known as interconnection, because qubits in quantum gates are considered coupled.
+This means that operations can affect multiple qubits incidentally and thus cause some
+error in the computation -- the state of the qubit is important to the probability of
+result upon measurement. 
+ Hence, there needs to be a device that can send control signals to specific parts of the machine while also shielding the others from bad interference (Progress and Prospects, 116). Thus, error correction is a principle obstacle for quantum machines.
+
+Another major obstacle is the decoherence problem. "Decoherence is this: If the quantum system is not perfectly isolated from its environment, the quantum dynamics of the surrounding apparatus will also be relevant to the operation
+of the quantum computer, and its effects will be to make the computer's evolution nonunitary" (DiVincenzo, Quantum Computation, 259).
+One of the issues with solving decoherence is in development of tools that would help build a solution. Some tools are more developed than others, which makes using them together harder.
+As a consequence, while attempting to compute up to a certain amount
+before coherence falls apart, computation must be repeated, requiring an unreasonable amount of resources. Hence, algorithms like Shor's, that have promising asymptotic speed
+ups compared to classical machines, are not as perfect as they seem.
+The resource requirements for executing the algorithm with an acceptable amount of
+error adds to the complexity of using such procedures.
+
+There are five criteria (DiVincenzo, Physical Implementation, 2-6) for an effective quantum machine. The first states
+that a quantum machine must have "well characterized qubits" and be scalable -- i.e.
+be able to use 40-50 qubits as well as thousands of qubits. The qubits also need to be initialized to a grounded state, giving a semantic starting point for any procedure.
+Machines must be able to account for possible interaction with the environment.
+As a corollary, sufficiently long decoherence time offers benefits for quantum error correction codes.
+Quantum gates must be able to be sequenced as unitary operations on the qubits, and
+upon measurement the machine must have qubit-specific capabilities of reading the result. 
+
+Currently, there are working machines that can operate on tens of qubits, but implementations vary in quality. Research in quantum computing has an intermediate goal of being able to perform quantum procedures before total decoherence. And, though there has been progress on this front, there remains the issue of bringing these systems to scale.
+The overall goal is to have quantum machines that can operate on thousands of qubits, but it is unknown how long this will take. Some research says the 2020s, while other research is uncertain. 
+
+
+  % =========== how Quantum Crypto undermines Modern Crypto  ===========
+\subsection{How Quantum Cryptography undermines Modern Cryptography} 
+
+A key issue with modern cryptography is replacing current protocols with new ones.
+One would need to rewire every machine using the old protocol in order to use an updated one, once an updated protocol becomes necessary.
+Quantum computing, at large enough scale, has the ability to threaten key exchanges and digital signatures.
+We will examine the implications for asymmetric and symmetric cryptography, digital certificates and signatures, and hash functions.
+
+There are two published algorithms that are primarily discussed in the literature and they are referred to by their creators: Shor and Grover.
+These procedures offer faster solutions to problems that are infeasible by modern classical
+computers.
+Shor showed that factoring numbers and computing discrete logs for elliptic curves can be done in polynomial time (Shor, 129), and Grover showed that searching through $n$ entries of a database for one element can be done in time $\sqrt{n}$ steps (Grover, 338).
+
+On a quantum machine of around 2,300 qubits, Shor's algorithm is estimated to be able to run in a single day and break RSA 1024 encryption (Progress and Prospects, 97).
+This is one of the most standout results and has been the catalyst for many people
+to take heed of the dangers quantum computing poses for key exchange protocols.
+It also puts asymmetric cryptography at great risk, meaning the field of cryptography must revist problems that asymmetric cryptography once solved. These include the problem of how to securely distribute, share, and/or agree upon secret keys, and also message authentication and verification.
+Protocols like TLS that use asymmetric cryptography will need to be updated as well, as a break in this encryption scheme would
+critically impact many web services. 
+
+
+Breaking asymmetric cryptography also has severe implications for digital signatures and certificates.
+Because many signatures and certificates use RSA and similar cryptographic techniques, an attacker using Shor's algorithm has the ability to gather keys used by certificate authorities.
+"This adversary would be able to issue fake certificates, properly sign malicious
+software, and potentially spend funds on behalf of others" (Progress and Prospects, 102).
+This endangers any client using keys signed by a certificate authority, as the
+compromise could mean that no authority can be trusted.
+Many services would have to spend considerable time replacing keys, getting new
+signatures/certificates, and deprecating any services that rely on the
+compromised certificate.
+
+
+For symmetric cryptography there are some interesting points of consideration.
+Firstly, "Progress and Prospects" suggests that AES is susceptible to Grover's algorithm; finding
+the secret key from a space of $2^{128}$ could be done in time proportional to $2^{64}$.
+This would require many quantum machines running in a cluster, using thousands of
+qubits and extremely fault-tolerant technology, and the cluster is
+estimated to need about a month of time to compute
+(Progress and Prospects, 100).
+Executing such a method on a single machine is intractable.
+As stated in the NIST Internal Report, "it has been shown that an exponential speed up for search algorithms is impossible, suggesting that symmetric algorithms and hash functions should
+be usable in a quantum era", though key sizes would need to increase for symmetric encryption schemes to stay secure (Chen, et al. 3).
+This increase would require adapting protocols such as TLS (Transport Layer Security) and IKE (Internet Key Exchange) to accommodate larger keys (Chen, et al. 4). 
+Furthermore, the example we gave of a quantum machine breaking AES is just for 128 bit keys.
+The simple solution of using 256-bit keys would make the problem intractable for quantum
+computers.
+It should be noted, though, that it is possible new algorithms will be devised or better
+machines will be produced as quantum technology advances.
+This, of course, would require revisiting these security issues.
+
+
+Hash functions are considered safe because of how strong collision-resistance makes them,
+as well as their "one-way" nature.
+However, passwords are worth rethinking. If Grover's algorithm could be
+sped up with better error-correction, it is possible authentication via password
+would no longer be safe. This follows from passwords usually having short lengths and
+a limited sample space of possible characters. This is a big "if" for Grover's algorithm and the work on reduction of quantum machine overhead, though.
+
+The threat of quantum computing ranges from hash functions to asymmetric cryptography -- the former safe and the latter awaiting extinction.
+Standards committees and protocol developers should be aware of this scale and consider
+how to make changes to endangered services like TLS.
+While it is good that symmetric cryptographic schemes can survive, the field of
+cryptography once again faces the problem of how to securely distribute, share,
+and/or agree upon secret keys, as well as how to authenticate and verify messages. 
+
+    
+
+  % =========== proposed responses in the post-quantum world ===========
+   \subsection{Proposed Responses in the Post-Quantum World}
+
+Although the state of the art of quantum computers is not at the level of total fault-tolerance and sufficient scalability, cryptography researchers are investigating solutions to problems posed by such machines.
+Because it is unknown when a machine capable of critically damaging modern cybersecurity will be in production, it is vital to begin looking for solutions now. 
+
+Creating secure, quantum-based solutions to problems like key distribution depends not on difficult-to-solve mathematical processes as in classical computing, but on physical processes. Furthermore, such solutions need to be able to defend against both classical and quantum attacks (Chen, et al. ii). 
+
+One example of a solution to the key distribution problem is the BB84 protocol, named for its creators Charles H. Bennett and Gilles Brassard who developed the protocol in 1984. As Shor and Preskill explain, BB84 works like this: "Alice sends each bit of the secret key in one of a set of conjugate bases which Eve does not know, and this key is protected by the impossibility of measuring the state of a quantum system simultaneously in two conjugate bases" (Shor and Preskill 441). There are two bases: rectilinear and diagonal, each of which have two different polarizations. Any attempt by Eve to measure the key in order to launch an attack will change the state of the message. However, Bob does not know ahead of time what sequence of bases Alice will use, therefore he has no way of knowing whether or not Eve interfered with the message. So, Alice and Bob then compare their versions of the basis sequence and drop any mismatching bits. After some final adjustments to account for error and possible eavesdropping by Eve, Alice and Bob have their final private key, which they can use for classical symmetric cryptography going forward (Aggarwal, et al. 28-29). 
+
+Daniel Gottesman and Issac L. Chuang provide an example of a solution to the digital signature problem. In this solution, recipients of Alice's message have a copy of her "public key", which is produced with a one-way quantum function that takes a classical bit-string and returns a sequence of quantum states (Gotteson and Chuang 2). Although this solution becomes insecure if there are too many copies of Alice's public key in circulation, this solution provides "unconditionally secure digital signatures" provided there are not too many copies (Gotteson and Chuang 1). All in all, the idea of this solution is to recreate classical digital signature protocols (i.e. the ability to produce a public key with a one-way function and widely share it without endangering the message) using quantum technology (Gotteson and Chuang 1-2).
+
+Lastly, the inability to determine exactly when there will be large-scale quantum computers makes it unclear exactly when our society should begin transitioning to post-quantum security measures. The consequences of transitioning too late are obvious, but transitioning too early could mean time and money wasted. The Internet Engineering Task Force (IETF) suggests that researchers developing quantum computers periodically demonstrate their work to the public in order to help organizations better decide when to begin transitioning to post-quantum security (Hoffman 12-13).
+
+
+\section{Suggestions}
+
+% Suggestions (1-2 pages): I expect about a page or two of your thoughts on suggestions for future work. How can the current situation be improved?
+
+Some of the most important work will be in developing better error-correcting
+capabilites for quantum machines. The decoherence issue is closely tied to this, and it
+is an inevitable issue as we look to make quantum machines more robust.
+For example, we use input/operations for classical computing while in the quantum context,
+interacting with the system will fundamentally affect it.
+
+
+Due to the time and coordination required to implement a new quantum-safe infrastructure, we need to prepare to defend against quantum attacks now. That said, we should not be rushing scientists to have results because investors have spent money. Pressure to meet deadlines with an area as dense and technical as quantum computing will not help scientists produce good work, only rushed work if any at all (Hsu). Furthermore, advances in quantum technology may invalidate our current solutions, solve existing security problems, or create new ones. Adaptability will be a crucial skill in a post-quantum world. 
+
+And, the mere ability to guard against quantum computing is only part of the battle. In order to be viable, solutions must be time and memory efficient (Hsu).
+Furthermore, defenses against quantum attacks will need to be rigorously tested, standardized, widely implemented, and applied retroactively
+(so that past communications are not compromised) ("Quantum-Safe Cryptography").
+These implementation steps will require as much consideration as the development of new encryption schemes. This will be especially important for industries where security is paramount, such as financial, medical, and governmental institutions.
+
+We would suggest that more work go towards solving classical problems with quantum methods.
+Even if it shows to be the wrong way to devise quantum methods, it would illuminate the differences between the two models.
+Also, universities and secondary schools should begin teaching quantum concepts to students, as
+there should be no barrier for entry to an emerging field of computing.
+Research into quantum programming languages is of great interest and we
+would like to see more concrete examples, semantics and documentation of languages
+to talk about qubits and quantum operations. One question in this area
+is how will types look in a quantum setting? Will embedded languages for classical computing into quantum models be useful? What about the other way around?
+
+
+\section{Conclusions}
+
+% Conclusions (1 page): Summarize your findings in the first paragraph, and in the second paragraph conclude with your philosophical ruminations about the problem, what needs to be done, and where we stand.
+
+Quantum machines are a nontrivial subject. The prerequisite math and physics is more
+demanding of users and people who are interested than classical computing. The
+configuration of the machine is a very tedious and precise process to have working functionally.
+These are issues computer scientists are investigating -- from error-correcting to better developed
+equipment to new kinds of algorithms -- and they offer exciting ideas for anyone interested in this field.
+The fundamental characteristic of quantum computing is the ability to consider multiple states at once and the
+power to switch from a deterministic model to a probabilistic model of computing during
+execution.
+These, along with the details they require, offer new perspectives in the field
+of computer science. 
+
+While asymmetric encryption such as RSA will be ineffectual in a post-quantum world, hash functions and symmetric cryptography won't be.
+Quantum key distribution protocols such as BB84 can help solve the key distribution
+problem after asymmetric cryptography is obsolete.
+Furthermore, even symmetric cryptography will have to adapt, as some current key sizes are too small to withstand attacks from quantum computers. And because key sizes will need to increase, current Internet protocols will have to adapt to accommodate the changes. 
+
+Technology that can break modern security measures sounds like something out of dystopian science fiction, yet at its heart, it is simply another opportunity to search for new solutions to new security problems. After all, even after we replace and adapt current technology to guard against quantum computing, there will inevitably be another attack that utilizes quantum technology or, eventually, some other technology that has yet to be developed.
+
+I would be surprised if there was not a cloud, similar to the "AI Winter", building
+up around quantum computing. It seems the public interest is largely related
+to the flashiness of quantum computing; wondering how long before such an interesting
+concept is manifested.
+The principle question should be how are we going to do it, not how long until we do.
+This will require a lot of hard work, almost none of it flashy.
+The original notion of a computer was a person. Alan Turing worked to understand
+how one might formalize a process a computer does. Thus a machine was born.
+Now we are approaching a machine that has a different perspective than all those before it...
+\begin{center}
+  {\emph{"Either mathematics is too big for the human mind, or the human
+    mind is more than a machine." \\ Kurt Godel}}
+\end{center}
+
+\newpage
+
+\section{Bibliography}  % \cite{name of entry}
+\begin{hangparas}{.25in}{1}
+Aggarwal, Rahul, et al. "Analysis of Various Attacks over BB84 Quantum Key
+Distribution Protocol". \textit{International Journal of Computer Applications (0975 – 8887)}, vol. 20, no. 8, April 2011, pp. 28-31. 
+
+Chen, Lily, et al. "Report on Post-Quantum Cryptography". \textit{National Institute of Standards and Technology Internal Report 8105}, U.S. Department of Commerce, April 2016.
+
+DiVincenzo, D. P. "Quantum Computation". \textit{Science}, vol. 270 no. 5234, 1995. pp. 255–261. doi:10.1126/science.270.5234.255 
+
+DiVincenzo, D. P. "The Physical Implementation of Quantum Computation". \textit{arXiv},
+IBM T.J. Watson Research Center, Feb 1, 2008. pp 1-9 arXiv:quant-ph/0002077
+
+Gottesman, Daniel, and Chuang, Issac L. "Quantum Digital Signatures". \textit{arXiv}, Cornell University, 15 Nov 2001. https://arxiv.org/pdf/quant-ph/0105032.pdf. Accessed 6 Dec 2019.
+
+Grover, L. K. "From Schrödinger’s equation to the quantum search algorithm". \textit{Pramana}, vol. 56, no. 2-3, Feb 2001. pp. 333–348. doi:10.1007/s12043-001-0128-3 
+
+Hoffman, P. "The Transition from Classical to Post-Quantum Cryptography draft-hoffman-c2pq-05". \textit{Internet Engineering Task Force}, 21 May 2019.
+
+Hsu, Jeremy. "How the United States Is Developing Post-Quantum Cryptography". \textit{IEEE Spectrum}, 6 Sep 2019. https://spectrum.ieee.org/tech-talk/telecom/security/how-the-us-is-preparing-for-quantum-computings-threat-to-end-secrecy. Accessed 6 Dec 2019. 
+
+Kaushik, B. K., Kulkarni, A., and Bindal, B. "Quantum Computing Circuits Based on Spin- Torque Qubit Architecture." \textit{IEEE Nanotechnology Magazine}, vol. 13, no. 5, Oct 2019. doi:10.1109/mnano.2019.2927782 
+
+Kitaev, A. Yu. "Quantum computations: algorithms and error correction" \textit{Russian Mathematical Surveys}, vol. 52, no. 6, 1997. pp. 1191–1249. 
+
+National Academies of Sciences, Engineering, and Medicine. \textit{Quantum Computing: Progress and Prospects.} Washington, DC: The National Academies Press, 2019. https://doi.org/10.17226/25196. 
+
+"Quantum-Safe Cryptography." \textit{ETSI}. https://www.etsi.org/technologies/quantum-safe-cryptography. Accessed 6 Dec 2019. 
+
+Shor, P. W. (n.d.). "Algorithms for quantum computation: discrete logarithms and
+factoring". Proceedings 35th Annual Symposium on Foundations of Computer Science. doi:10.1109/sfcs.1994.365700 
+
+Shor, Peter W., and Preskill, John. "Simple Proof of Security of the BB84 Quantum Key Distribution Protocol". \textit{Physical Review Letters}, vol. 85, no. 2, 10 July 2000, pp. 441-442. 
+
+\end{hangparas}
+
+% Bibliography/References (1 page): Plagiarism will not be tolerated. In any scholarly paper, you must cite all your sources in your main text, and include a reference to the bibliography for details. 
+
+
+
+
+\end{document}

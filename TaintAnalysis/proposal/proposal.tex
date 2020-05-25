@@ -1,0 +1,114 @@
+\documentclass[11pt]{article}
+
+\usepackage{graphicx}
+\graphicspath{{.}}
+\usepackage{amsthm}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{indentfirst}
+\usepackage{layout}
+\usepackage{hanging}
+\usepackage{setspace}
+\usepackage{mathtools}
+
+\DeclarePairedDelimiter\qb{\lvert}{\rangle}
+
+\def\tit{B433 Paper Proposal}
+\def\term{2 March 2020}
+
+\def\auths{Joshua Larkin}
+
+\doublespacing
+
+\lhead{\auths}
+\chead{\tit}
+\rhead{\thepage}
+\cfoot{}
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\tit}}\\
+    \normalsize\vspace{0.1in}\small{B433 : Spring 2020 }\\
+    \vspace{0.1in}\large{\textit{\auths}}
+    \vspace{3in}
+}
+
+\date{}
+
+\renewcommand\headrulewidth{0.4pt}
+\fancyheadoffset{0.5 cm}
+
+\oddsidemargin 0pt
+\evensidemargin 0pt
+\topmargin -.3in
+\headsep 20pt
+%\footskip 20pt
+\textheight 8.5in
+\textwidth 6.25in
+
+\setlength\topmargin{0pt}
+\addtolength\topmargin{-\headheight}
+\addtolength\topmargin{-\headsep}
+\setlength\oddsidemargin{0pt}
+\setlength\textwidth{\paperwidth}
+\addtolength\textwidth{-2in}
+\setlength\textheight{\paperheight}
+\addtolength\textheight{-2in}
+
+\begin{document}
+
+%%%% TITLE PAGE
+%\maketitle
+%\pagebreak
+
+%%%%% First content page
+
+\section{Introduction}
+% When we enter our credit card number into a website, why do we trust that our data is
+% safe? Any information we enter in a field of a website is generally trusted because of
+% an expectation that the service we are using is responsible. It is convenient,
+% albeit a bit naive, to trust that the service provider is taking on the proper
+% responsibility to ensure our data is safe. But, I wonder what is actaully being
+% done to provide this security. 
+
+A process asks for information, reads it from the 
+user, then discards of it when it is done. But how long was the user's information 
+available in the program, and where was it available? To get answers, I will research
+taint propagation. Taint propagation is the practice of marking points in code
+that untrusted sources may have access to. That is, when a user input is asked for,
+what methods does the input get used in, where does it get stored in memory, what
+code has access to that location, and how long will the input be stored?
+Aside from sensitive user information, this has direct relevancy to SQL injection 
+attacks as well. This area of study is known as taint propagation.
+
+\section{Approach}
+So far I have gathered 4-5 papers on implementations of taint propagation. 
+I plan to describe the current state of implementations, and the factors that 
+drove researchers to these solutions. For example, FlexiTaint and Iodine are two 
+tools I have found papers on. I have heard of implementations for the 
+Android device, called TaintDroid, which I would like to cover. I also plan on studying
+vulnerabilities found with taint propagation, as well as how programming languages
+developers have built taint propagation tools into their language. 
+
+\section{Schedule}
+I have outlined the work to be done incrementally over a few weeks.  
+One way to read this is that Goal 1 will be done in one week and Goal 
+2 in the next. I would like to be ahead of this schedule, though it 
+provides a basis for which to make progress. \\
+
+\begin{tabular}{c|c|c}
+	2-Week Period & Goal 1 & Goal 2 \\
+	\hline 
+	28 Feb, 13 Mar & Introduction & Approach \\
+	\hline
+	13 Mar, 27 Mar & Write the main content & Revise introduction \\
+	\hline
+	27 Mar, 10 Apr & Revise main content &  Suggestions and Conclusion \\
+	\hline
+	10 Apr, 24 Apr & Revise Suggestions and Conclusion &  Prepare presentation \\
+	\hline
+\end{tabular}
+
+
+\end{document}

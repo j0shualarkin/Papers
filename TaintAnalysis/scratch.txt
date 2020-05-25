@@ -1,0 +1,49 @@
+Taint analysis is a term for a collection of techniques in tracking untrustable data
+through programs. -- how this relates to SQL, XSS, BfOf
+
+-- what paper is about 
+-- applications to programming languages in general
+    -- general idea from cmu paper
+    -- java string libraries 
+    -- ???more???
+-- more look at solutions to those areas: sql, xss, bfof? 
+-- slow downs and responses 
+
+
+
+
+%% garbage
+Practical computer science involves both theoretical understandings and 
+pragmatism for real world scenarios. There is a lot of research being done
+on dependently typed languages, and there are a lot of C programs in use, handling
+sensitive data. There are many problems in the realm of 
+cybersecurity, software and web security in particular, that require a bit of both
+
+---------------------------------------------------------------------------------------------------------------------
+
+as 
+well as exposure to real world scenarios 
+
+Motivate taint analysis. What makes it interesting?
+
+also known as information flow analysis
+
+there are many ways in which this is applicable as generally it is a 
+strong security strategy 
+
+we want to talk about the main idea 
+
+and all the ways in which it is applicable
+
+really interesting from a PL perspective because languages can do so many 
+things
+
+rewriting string libraries 
+
+understand code via analysis and appreciate the necessary assumptions for each line
+-- important for buffer overflow vulnerabilities! 
+
+
+
+
+

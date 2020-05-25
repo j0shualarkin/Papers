@@ -1,0 +1,23 @@
+dynamic information-flow tracking is 
+pretty much dynamic taint analysis 
+
+".. sinks, e.g., network output"
+  "... standard output interfaces, i.e., terminal, 
+  file and socket outputs" 
+
+"every instruction has to be monitored to propagate tains to the destination operand based on the source operands' taints" 
+
+performance overhead when using DTA tools, DIFT is an improvement on that 
+
+Iodine is a OHA (optimistic hybrid analysis)
+and can "imporve the precision and scalability
+of static taint analysis" 
+
+*** mostly about optimizations to TA ***
+
+"static taint analysis computes how the taints
+of data propagate throug hthe program
+under a given selection of taint sources, 
+sinks, and propagation policies."
+
+

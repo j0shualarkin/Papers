@@ -1,0 +1,168 @@
+dynamic taint analysis: which computations are affected by user input (or other untrusted sources)
+
+forware symbolic execution: build a logical formula describing "program execution path
+ => reasoning about execution is scoped down to the domain of the logic
+
+ combine them and you can analyze execution paths that depend on tainted values 
+
+ ===
+
+ unknown vulnerability detection
+- prevent code injections
+
+ automatic input filter generation
+ - remove exploits from input streams => strong accuracy guarantees
+
+ malware analysis 
+- analyze flow thru malware binary, explore trigger-based behavior, detect emulators
+
+ test case generation
+
+ functions/scope are capable of being written in the TA langauge SimpIL
+ you would just need to update the compiler to handle forms of a 
+ functiosn in a host language by compiling them to SimpIL constructs 
+   -- (3/15)
+
+====
+Dynamic Taint Analysis
+
+* done at runtime! "dynamic" a keyword for this ?
+
+* track info flow b/t sources and sinks 
+
+* tainted data is such when it dervies from a tained sources (typically user input)
+
+* taint policies determine exactly how taint flows as a program executes 
+  like what functions introduce new taint and what checks are performed on tainted values
+
+==== 
+Errors Occuring in DTA:
+
+1) overtainted values -- marked as T when not derived from a T source
+   e.g., a False Positive in IDS
+
+2) undertainting -- analysis misses the info flow from a src to a sink
+   e.g., a False Negative in IDS
+
+if neither occur, we say the DTA system is _precise_
+
+====
+More on Policies:
+
+Taint Introduction
+[in the context of operational semantics]
+- initially everything is untainted 
+- a (read) or similar function will introduce taint 
+- important! distinguish b/t diff input sources
+
+"an internet-facing network input source may always introduce taint, while a file descriptor that reads from a trusted
+configuration file may not" (4/15)
+
+Taint Propagation
+each function that may get some tainted value has a 
+policy check to tell whether taint will flow through that 
+piece of code
+
+for example the policy is P and P_binop(t1,t2) is t1 or t2
+where t1 and t2 are taint values 
+   -- (either T for tainted or F for not)
+
+if a tainted value is encountered by the policy 
+  (returns true), then machine halts abnormally
+
+some policies can only check inputs and not say much
+about tainted memory, so different policies are needed
+to check for tainted values and memory addresses
+
+====
+Challenges & Opportunities
+------
+(*) Tainted Addresses : 
+   distinguishing b/t memory addresses and cells is not
+   always appropriate (?)
+
+[*] mem-ops involve the address of the cell 
+   and the value stored in the cell
+
+   the idea that the taint status of an address is independent of the object (cell) pointed to 
+
+   so this independence is not always desirable ???
+
+   you could have an addres policy that checks 
+   both the value and address for taint 
+
+------
+
+(*) Undertainting : 
+    DTA doesn't handle some types of info flow
+
+------
+(*) Overtainting : 
+    easier to decide taint is introduced than 
+    to remove taint
+
+------
+(*) Time of Detection vs Time of Attack : 
+    when used for attack detection, DTA may alert too late
+
+------
+
+"reasoning about control dependencies rquires reasoning 
+about multiple paths, and dynamic analysis executes on 
+a single path at a time" 
+==> impossible to accurately determine control-flow-based 
+    taint
+==> static analysis can though
+    can apply over entire program or a collection of 
+    dynamic analysis runs 
+
+------
+Sanitization: identify when taint can be removed 
+              from a value
+
+the code ```b = a xor a``` will (in a default policy)
+mark b tainted if a is tainted, but this is unnecessary
+since ```b``` will always be 0.
+
+some programs have sanitization logic already which 
+helps determine when something is untainted 
+(if program does bounds check on index before accessing)
+
+*** "DTA keeps track of too little information"
+
+*** "Taint analysis alone does not check for overflow: it 
+just marks which values are dervied from taint sources"
+
+  => need overflow/other policy as well for more 
+     specific attack detection
+
+// how much to include about forward symbolic execution?
+// it is a way to make TA stronger but has more nuances
+// and its own challenges/opportunities 
+
+"The ever-growing need for more efficient dynamic taint analyses 
+was initially met by binary instrumentation frameworks [20,51].
+Due to the high overhead of binary instrumentation techniques, more efficient 
+compiler-based [41,63] and hardware-based [24,25,58,59] approaches were later proposed. "
+(13/15)
+
+
+====
+Applications of DTA
+
+(*) Atuomatic NEtwork Protocol Understanding 
+-- study (understand) behavior of network protocols
+
+(*) Malware Analysis -- analyze malware behavior 
+   -- track when code unpacking is used in malware
+
+(*) Web Apps -- detect common atcks like SQLi and XSS
+
+Taint Performance & Frameworks
+- more efficient => binary instrumentation frameworks 
+   [20,51]
+- more efficient but compiler/hardware based [41,63; 24...]
+
+
+
+

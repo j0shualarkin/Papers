@@ -1,0 +1,31 @@
+tainting software has "significant problems with
+self-modifying code, JIT compilation, and multithreaded
+applications"
+
+hardware problems that 
+"limit their [hardware tainting schemes] practicality" :
+- "implementation requires non-standard commodity components and a redesign of the entire processor core"
+ -- taint bits require wider memory, wider registers, wider buses and wider bypasses
+
+- "limited flexibility in specifying taint propagation
+rules and in the # of taint btis associated with a value
+
+-- want more taint bits, gonna cost more memory
+
+it seems tainting inputs to detect attacks is only 
+one particular use of tainting....
+
+"FlexiTaint is not a comprehensive security solution by 
+itself, but rather a proof-of-concept hardware substrate
+that can speed up an important class of security solutions, namely taint propagation."
+
+"FlexiTaint can be used with any set of propagation rules in which the tiant of the result depends only on the opcode 
+and the taints of the operands."
+
+summary of disadvantages:
+
+delays
+consistency issues
+"the latency of misses in the TL1 cache is fully exposed
+because they stall the in-order taint processing pipeline"
+
